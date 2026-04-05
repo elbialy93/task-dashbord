@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>تستات — لوحة متابعة المهام (نسخة الحفظ التلقائي)</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f7f6f2;
+  --surface: #ffffff;
+  --surface2: #f0efe9;
+  --border: rgba(0,0,0,0.10);
+  --border-strong: rgba(0,0,0,0.18);
+  --text: #1a1a18;
+  --text-2: #6b6b65;
+  --text-3: #adadA5;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --blue-bg: #E6F1FB; --blue-text: #185FA5;
+  --red-bg: #FCEBEB;  --red-text: #A32D2D;
+  --amber-bg: #FAEEDA; --amber-text: #854F0B;
+  --green-bg: #EAF3DE; --green-text: #3B6D11;
+  --teal-bg: #E1F5EE; --teal-text: #0F6E56;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1c1a;
+    --surface: #242422;
+    --surface2: #2e2e2b;
+    --border: rgba(255,255,255,0.09);
+    --border-strong: rgba(255,255,255,0.18);
+    --text: #f0efe9;
+    --text-2: #9a9a92;
+    --text-3: #55554e;
+    --blue-bg: #0c447c; --blue-text: #b5d4f4;
+    --red-bg: #791f1f;  --red-text: #f7c1c1;
+    --amber-bg: #633806; --amber-text: #fac775;
+    --green-bg: #27500a; --green-text: #c0dd97;
+    --teal-bg: #085041; --teal-text: #9fe1cb;
+  }
+}
+body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+.header { background: var(--surface); border-bottom: 0.5px solid var(--border); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+.logo { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; color: var(--text); }
+.logo span { color: var(--blue-text); }
+.header-sub { font-size: 12px; color: var(--text-2); }
+.container { max-width: 1100px; margin: 0 auto; padding: 20px 16px; }
+.stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; margin-bottom: 20px; }
+.stat { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; }
+.stat-label { font-size: 11px; color: var(--text-2); margin-bottom: 5px; letter-spacing: 0.03em; }
+.stat-val { font-size: 26px; font-weight: 600; color: var(--text); line-height: 1; }
+.tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+.tab { padding: 7px 18px; border-radius: var(--radius-md); border: 0.5px solid var(--border); font-size: 13px; cursor: pointer; background: var(--surface); color: var(--text-2); transition: all 0.15s; }
+.tab.active { background: var(--surface2); color: var(--text); border-color: var(--border-strong); font-weight: 500; }
+.tab:hover:not(.active) { background: var(--surface2); }
+.section { display: none; }
+.section.active { display: block; }
+.add-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 15px; border-radius: var(--radius-md); border: 0.5px solid var(--border-strong); font-size: 13px; cursor: pointer; background: var(--surface); color: var(--text); margin-bottom: 14px; transition: background 0.12s; }
+.add-btn:hover { background: var(--surface2); }
+.kanban { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; }
+.col { flex: 0 0 180px; }
+.col-head { font-size: 11px; font-weight: 500; color: var(--text-2); letter-spacing: 0.04em; margin-bottom: 8px; padding: 6px 10px; border-radius: var(--radius-md); background: var(--surface2); display: flex; justify-content: space-between; align-items: center; }
+.col-count { font-size: 10px; background: var(--surface); color: var(--text-3); border-radius: 9px; padding: 1px 7px; border: 0.5px solid var(--border); }
+.card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; margin-bottom: 7px; }
+.card-title { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 4px; line-height: 1.45; }
+.card-emp { font-size: 11px; color: var(--text-2); margin-bottom: 7px; }
+.card-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 8px; }
+.tag { font-size: 10px; padding: 2px 7px; border-radius: 9px; font-weight: 500; }
+.tag-blue { background: var(--blue-bg); color: var(--blue-text); }
+.tag-red { background: var(--red-bg); color: var(--red-text); }
+.tag-amber { background: var(--amber-bg); color: var(--amber-text); }
+.tag-green { background: var(--green-bg); color: var(--green-text); }
+.card-actions { display: flex; gap: 5px; }
+.act-btn { font-size: 10px; padding: 3px 8px; border-radius: var(--radius-md); border: 0.5px solid var(--border); cursor: pointer; background: var(--surface2); color: var(--text-2); transition: background 0.1s; }
+.act-btn:hover { background: var(--bg); }
+.act-del { color: var(--red-text); }
+.empty-col { font-size: 11px; color: var(--text-3); text-align: center; padding: 18px 8px; border: 0.5px dashed var(--border); border-radius: var(--radius-md); }
+.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.38); z-index: 200; align-items: center; justify-content: center; }
+.modal-bg.open { display: flex; }
+.modal { background: var(--surface); border-radius: var(--radius-lg); border: 0.5px solid var(--border-strong); padding: 20px; width: 92%; max-width: 380px; }
+.modal h3 { font-size: 14px; font-weight: 600; margin-bottom: 14px; color: var(--text); }
+.modal label { font-size: 11px; color: var(--text-2); display: block; margin-bottom: 3px; }
+.modal input, .modal select, .modal textarea {
+  width: 100%; margin-bottom: 10px; font-size: 13px; padding: 7px 10px;
+  border: 0.5px solid var(--border-strong); border-radius: var(--radius-md);
+  background: var(--surface2); color: var(--text); outline: none;
+}
+.modal textarea { height: 64px; resize: none; }
+.modal-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
+.btn-cancel { padding: 7px 16px; border-radius: var(--radius-md); border: 0.5px solid var(--border); font-size: 13px; cursor: pointer; background: var(--surface2); color: var(--text-2); }
+.btn-save { padding: 7px 16px; border-radius: var(--radius-md); border: 0.5px solid var(--border-strong); font-size: 13px; cursor: pointer; background: var(--text); color: var(--bg); font-weight: 500; }
+@media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="logo">تس<span>تات</span></div>
+  <div class="header-sub">لوحة متابعة أداء الفرق - نسخة الحفظ التلقائي</div>
+</div>
+
+<div class="container">
+  <div class="stats-grid" id="stats-grid"></div>
+  <div class="tabs" id="tabs"></div>
+  <div id="sections"></div>
+</div>
+
+<div class="modal-bg" id="modal-bg">
+  <div class="modal">
+    <h3 id="modal-title">إضافة مهمة جديدة</h3>
+    <label>اسم المهمة</label>
+    <input type="text" id="f-name" placeholder="أدخل اسم المهمة" />
+    <label>الموظف المسؤول</label>
+    <input type="text" id="f-emp" placeholder="اسم الموظف" />
+    <label>الأولوية</label>
+    <select id="f-pri">
+      <option value="high">عالية</option>
+      <option value="med" selected>متوسطة</option>
+      <option value="low">منخفضة</option>
+    </select>
+    <label>ملاحظات</label>
+    <textarea id="f-notes" placeholder="ملاحظات إضافية (اختياري)"></textarea>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">إلغاء</button>
+      <button class="btn-save" onclick="saveTask()">إضافة</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const teams = [
+  { id:'data',   label:'إدخال البيانات', stages:['استلام الملف','جاري الرفع','مراجعة','تعديل','اعتماد نهائي'] },
+  { id:'dev',    label:'البرمجة',        stages:['مهمة مراجعة','جاري','ملاحظات','منتهي'] },
+  { id:'design', label:'التصميم',        stages:['استلام السكريبت','تصميم أولي','مراجعة','تعديل','تسليم نهائي'] }
+];
+const priLabel = { high:'عالية', med:'متوسطة', low:'منخفضة' };
+const priTag   = { high:'tag-red', med:'tag-amber', low:'tag-green' };
+
+// البيانات الافتراضية في حال كانت الذاكرة فارغة
+let defaultTasks = {
+  data: [
+    { id:1, name:'امتحانات الرياضيات - الفصل الأول', emp:'أحمد', stage:0, pri:'high' },
+    { id:2, name:'امتحانات العلوم - المرحلة الإعدادية', emp:'سارة', stage:1, pri:'med' }
+  ],
+  dev: [],
+  design: []
+};
+
+let tasks = {};
+let nextId = Date.now(), activeTeam = 'data', currentTeam = 'data';
+
+// دالة لاستعادة البيانات من ذاكرة المتصفح
+function loadData() {
+    const saved = localStorage.getItem('testat_dashboard_data');
+    if (saved) {
+        tasks = JSON.parse(saved);
+    } else {
+        tasks = defaultTasks;
+    }
+}
+
+// دالة لحفظ البيانات في ذاكرة المتصفح
+function saveData() {
+    localStorage.setItem('testat_dashboard_data', JSON.stringify(tasks));
+}
+
+function totalTasks(){ return Object.values(tasks).flat().length; }
+function doneTasks(){
+  let d=0;
+  teams.forEach(t=>{ tasks[t.id].forEach(tk=>{ if(tk.stage===t.stages.length-1) d++; }); });
+  return d;
+}
+function inProgressTasks(){
+  let p=0;
+  teams.forEach(t=>{ tasks[t.id].forEach(tk=>{ if(tk.stage>0&&tk.stage<t.stages.length-1) p++; }); });
+  return p;
+}
+
+function renderStats(){
+  const total=totalTasks(), done=doneTasks(), prog=inProgressTasks();
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('stats-grid').innerHTML=`
+    <div class="stat"><div class="stat-label">إجمالي المهام</div><div class="stat-val">${total}</div></div>
+    <div class="stat"><div class="stat-label">منتهية</div><div class="stat-val">${done}</div></div>
+    <div class="stat"><div class="stat-label">جاري التنفيذ</div><div class="stat-val">${prog}</div></div>
+    <div class="stat"><div class="stat-label">نسبة الإنجاز</div><div class="stat-val">${pct}%</div></div>
+  `;
+}
+
+function renderTabs(){
+  document.getElementById('tabs').innerHTML=teams.map(t=>`
+    <div class="tab${t.id===activeTeam?' active':''}" onclick="switchTeam('${t.id}')">
+      ${t.label} <span style="font-size:11px;opacity:0.6">(${tasks[t.id].length})</span>
+    </div>`).join('');
+}
+
+function renderSections(){
+  document.getElementById('sections').innerHTML=teams.map(t=>`
+    <div class="section${t.id===activeTeam?' active':''}" id="sec-${t.id}">
+      <button class="add-btn" onclick="openModal('${t.id}')">+ إضافة مهمة</button>
+      <div class="kanban" id="kanban-${t.id}"></div>
+    </div>`).join('');
+  teams.forEach(t=>renderKanban(t));
+}
+
+function renderKanban(team){
+  const el=document.getElementById('kanban-'+team.id);
+  if(!el) return;
+  el.innerHTML=team.stages.map((stage,si)=>{
+    const cards=tasks[team.id].filter(tk=>tk.stage===si);
+    return `<div class="col">
+      <div class="col-head">${stage}<span class="col-count">${cards.length}</span></div>
+      ${cards.length===0?'<div class="empty-col">لا توجد مهام</div>':''}
+      ${cards.map(tk=>`
+        <div class="card">
+          <div class="card-title">${tk.name}</div>
+          <div class="card-emp">${tk.emp}</div>
+          <div class="card-tags">
+            <span class="tag tag-blue">${tk.emp}</span>
+            <span class="tag ${priTag[tk.pri]}">${priLabel[tk.pri]}</span>
+          </div>
+          <div class="card-actions">
+            ${si>0?`<button class="act-btn" onclick="moveTask('${team.id}',${tk.id},-1)">← سابق</button>`:''}
+            ${si<team.stages.length-1?`<button class="act-btn" onclick="moveTask('${team.id}',${tk.id},1)">التالي →</button>`:''}
+            <button class="act-btn act-del" onclick="deleteTask('${team.id}',${tk.id})">حذف</button>
+          </div>
+        </div>`).join('')}
+    </div>`;
+  }).join('');
+}
+
+function switchTeam(id){
+  activeTeam=id;
+  renderTabs();
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+}
+
+function openModal(teamId){
+  currentTeam=teamId;
+  ['f-name','f-emp','f-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-pri').value='med';
+  document.getElementById('modal-title').textContent='إضافة مهمة — فريق '+teams.find(t=>t.id===teamId).label;
+  document.getElementById('modal-bg').classList.add('open');
+}
+
+function closeModal(){ document.getElementById('modal-bg').classList.remove('open'); }
+
+function saveTask(){
+  const name=document.getElementById('f-name').value.trim();
+  const emp=document.getElementById('f-emp').value.trim();
+  if(!name||!emp) return;
+  tasks[currentTeam].push({ id:Date.now(), name, emp, stage:0, pri:document.getElementById('f-pri').value });
+  closeModal(); 
+  saveData(); // حفظ البيانات
+  refresh();
+}
+
+function moveTask(teamId,taskId,dir){
+  const team=teams.find(t=>t.id===teamId);
+  const tk=tasks[teamId].find(t=>t.id===taskId);
+  const ns=tk.stage+dir;
+  if(ns<0||ns>=team.stages.length) return;
+  tk.stage=ns;
+  saveData(); // حفظ البيانات
+  refresh();
+}
+
+function deleteTask(teamId,taskId){
+  tasks[teamId]=tasks[teamId].filter(t=>t.id!==taskId);
+  saveData(); // حفظ البيانات
+  refresh();
+}
+
+function refresh(){ 
+    renderStats(); 
+    renderTabs(); 
+    renderSections(); 
+}
+
+document.getElementById('modal-bg').addEventListener('click',function(e){ if(e.target===this) closeModal(); });
+
+// نقطة البداية
+loadData();
+refresh();
+</script>
+</body>
+</html>
