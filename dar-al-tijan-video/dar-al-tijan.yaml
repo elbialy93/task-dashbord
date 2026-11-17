@@ -1,0 +1,85 @@
+identity:
+  name: "Dar Al-Tijan"
+  category: motion-graphics
+  mood: warm, reverent, encouraging, clear
+  pace: moderate
+  best_for: "Arabic vertical shorts for children and parents: adhkar, Quran learning tips, announcements from Dar Al-Tijan"
+
+visual_language:
+  color_palette:
+    primary: ["#0F1A3D", "#182657"]
+    accent: ["#E0B04F", "#1F9D6B"]
+    background: "#0F1A3D"
+    text: "#F7F1E3"
+    muted: "#B9C2DC"
+  composition: "vertical 9:16, RTL, centered; logo top-right; one idea per scene; gold hairline frame"
+  texture: "flat navy with a faint gold eight-point-star lattice; no photo textures"
+
+typography:
+  headings:
+    font: "Cairo"
+    weight: 900
+  body:
+    font: "Cairo"
+    weight: 500
+    line_height: 1.5
+  code:
+    font: "Amiri"
+    weight: 700
+  stat_card:
+    font: "Cairo"
+    weight: 900
+    size_multiplier: 3.0
+
+motion:
+  transitions: [fade, dissolve]
+  animation_style: "calm ease-out, lines rise and clear from blur, no bounce, no flashes"
+  pacing_rules:
+    min_scene_hold_seconds: 3
+    max_scene_hold_seconds: 12
+    text_card_hold_seconds: 3.5
+    stat_card_hold_seconds: 3.0
+    transition_duration_seconds: 0.45
+  entrance: "fade-up 30px with blur clearing"
+  exit: "fade-out"
+
+audio:
+  voice_style: "ElevenLabs voice 'Taj - Dar Al-Tijan' (voice_id bZzbfO1dhsJ3oUGK15I7), model eleven_v4; warm young mentor; fully vowelled fus-ha for adhkar and ayat"
+  music_mood: "none - narration only"
+  music_volume: 0
+  sfx_style: "none"
+  ducking_threshold_db: -3
+
+asset_generation:
+  image_prompt_prefix: "warm flat illustration, deep navy and gold palette with emerald accents, soft mosque interior light, "
+  image_negative_prompt: "any text, letters, Arabic or Quranic writing, open book pages with writing, real children's faces, photorealistic students"
+  diagram_style: "thin gold lines on navy, rounded shapes"
+  consistency_anchors:
+    - "Navy #0F1A3D background, gold #E0B04F accents, emerald #1F9D6B as the second accent"
+    - "Character Taj: about 20, white galabeya, navy vest with gold embroidery, green cap; same look in every shot"
+    - "Never render Arabic or Quranic text inside generated images; all text is typeset in the composition"
+    - "Never generate children presented as Dar Al-Tijan students; never AI-edit photos of real students"
+
+overlays:
+  stat_card:
+    bg: "#182657"
+    border: "#E0B04F"
+    radius: 36
+  key_term:
+    bg: "#E0B04F"
+    text: "#0F1A3D"
+    radius: 999
+
+quality_rules:
+  - "All on-screen text is Arabic, RTL, set in Cairo; ayat, hadith and adhkar are set in Amiri with full tashkeel and a visible source"
+  - "Religious texts are copied from a verified source and reviewed by a teacher before narration is generated"
+  - "Logo top-right throughout; closing card reads: دار التيجان - نبني جيل القرآن"
+  - "Vertical 1080x1920, 30 fps; keep text inside 80px side margins and clear of the top 150px and bottom 250px"
+  - "No music; narration normalised to about -15 LUFS"
+  - "Minimum contrast ratio 4.5:1 for all text"
+
+chart_palette:
+  - "#E0B04F"
+  - "#1F9D6B"
+  - "#F7F1E3"
+  - "#7C8FD1"
